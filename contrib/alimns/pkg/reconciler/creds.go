@@ -53,7 +53,7 @@ func GetCredentialsByName(ctx context.Context, client client.Client, namespace, 
 
 	credentials := &v1alpha1.Credentials{}
 	if err := json.Unmarshal(bytes, credentials); err != nil {
-		logging.FromContext(ctx).Error("Unable to create the GCP credential", zap.Error(err))
+		logging.FromContext(ctx).Error("Unable to create the MNS credential", zap.Error(err))
 		return nil, err
 	}
 	return credentials, nil

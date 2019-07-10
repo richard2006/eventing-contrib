@@ -27,14 +27,10 @@ type AliMNSChannelStatus struct {
 	Secret *corev1.ObjectReference `json:"secret"`
 	// SecretKey is the key in Secret that contains the credential to use.
 	SecretKey string `json:"secretKey"`
-
-	// GCPProject is the GCP project where the Topic and Subscription exist.
-	//GCPProject string `json:"gcpProject"`
-
-	// Topic is the name of the MNS Topic created in GCP to represent this Channel.
+	// Topic is the name of the MNS Topic created in MNS to represent this Channel.
 	Topic string `json:"topic,omitempty"`
 	// Subscriptions is the list of Knative Eventing Subscriptions to this Channel, each paired with
-	// the MNS Subscription in GCP that represents it.
+	// the MNS Subscription in MNS that represents it.
 	Subscriptions []AliMNSSubscriptionStatus `json:"subscriptions,omitempty"`
 }
 
@@ -50,8 +46,8 @@ type AliMNSSubscriptionStatus struct {
 	// +optional
 	ReplyURI string `json:"replyURI,omitempty"`
 
-	// Subscription is the name of the MNS Subscription resource in GCP that represents this
-	// Knative Eventing Subscription.
+	// Subscription is the name of the MNS Subscription resource in MNS that represents this
+	// Eventing Subscription.
 	Subscription string `json:"subscription,omitempty"`
 }
 

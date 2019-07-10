@@ -49,7 +49,7 @@ func (msw *AliMNSMessageWrapper) GetMessagePublishRequest() (*ali_mns.MessagePub
 // MNSClientCreator creates a MNSClient.
 type MNSClientCreator func(ctx context.Context, creds *v1alpha1.Credentials) (MNSClient, error)
 
-// AliMNSClientCreator creates a real GCP PubSub client. It should always be used, except during
+// AliMNSClientCreator creates a real MNS client. It should always be used, except during
 // unit tests.
 func AliMNSClientCreator(ctx context.Context, creds *v1alpha1.Credentials) (MNSClient, error) {
 	client := ali_mns.NewAliMNSClient(creds.Url, creds.AccessKeyId, creds.AccessKeySecret)
@@ -77,7 +77,7 @@ type MNSClient interface {
 // satisfies the interface.
 var _ MNSClient = &realAliMNSClient{}
 
-// realAliMNSClient wraps a real GCP PubSub client, so that it matches the MNSClient
+// realAliMNSClient wraps a real MNS client, so that it matches the MNSClient
 // interface. It is needed because the real SubscriptionInProject returns a struct and does not
 // implicitly match gcpMNSClient, which returns an interface.
 type realAliMNSClient struct {
@@ -123,9 +123,9 @@ func (c *realAliMNSClient) subscriptionReceiver(ctx context.Context, subscriptio
 		case resp := <-respChan:
 			{
 				msg := &realAliMNSMessage{
-					mrResp:               &resp,
-					client:               c.client,
-					subscription:         subscriptionName,
+					mrResp:       &resp,
+					client:       c.client,
+					subscription: subscriptionName,
 				}
 				f(ctx2, msg)
 			}
@@ -230,7 +230,7 @@ type MNSMessage interface {
 	MessageResponse() *ali_mns.MessageReceiveResponse
 }
 
-// realAliMNSMessage wraps a real GCP PubSub Message, so that it matches the MNSMessage
+// realAliMNSMessage wraps a real MNS Message, so that it matches the MNSMessage
 // interface.
 type realAliMNSMessage struct {
 	AliMNSMessageWrapper *AliMNSMessageWrapper

@@ -36,13 +36,8 @@ type ReceiveAdapterArgs struct {
 	TransformerURI string
 }
 
-const (
-	credsVolume    = "alibaba-cloud-key"
-	credsMountPath = "/var/secrets/alicloud"
-)
-
 // MakeReceiveAdapter generates (but does not insert into K8s) the Receive Adapter Deployment for
-// GCP PubSub Sources.
+// Mns Sources.
 func MakeReceiveAdapter(args *ReceiveAdapterArgs) *v1.Deployment {
 	replicas := int32(1)
 	return &v1.Deployment{

@@ -47,9 +47,7 @@ type envConfig struct {
 	// Environment variable containing the transformer URI.
 	Transformer string `envconfig:"TRANSFORMER_URI" default:""`
 
-	// Environment variable containing the GCP PubSub Topic being
-	// subscribed to's name. In the form that is unique within the project. E.g. 'laconia', not
-	// 'projects/my-gcp-project/topics/laconia'.
+	// Environment variable containing the MNS Topic being
 	Topic string `envconfig:"MNS_TOPIC" default:""`
 
 	// Environment variable containing the name of the subscription to use.

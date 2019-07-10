@@ -36,7 +36,7 @@ import (
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// Adapter implements the GCP Pub/Sub adapter to deliver Pub/Sub messages from
+// Adapter implements the mns  adapter to deliver messages from
 // a pre-existing topic/subscription to a Sink.
 type Adapter struct {
 	//
@@ -47,9 +47,9 @@ type Adapter struct {
 	SecretName string
 	//
 	SecretKey string
-	// TopicID is the pre-existing gcp pub/sub topic id to use.
+	// TopicID is the pre-existing mns topic id to use.
 	TopicID string
-	// SubscriptionID is the pre-existing gcp pub/sub subscription id to use.
+	// SubscriptionID is the pre-existing mns subscription id to use.
 	SubscriptionID string
 	// SinkURI is the URI messages will be forwarded on to.
 	SinkURI string
@@ -67,7 +67,7 @@ type Adapter struct {
 }
 
 func (a *Adapter) Start(ctx context.Context) error {
-	a.source = sourcesv1alpha1.MnsEventSource(a.TopicID)
+	a.source = sourcesv1alpha1.AliMnsEventSource(a.TopicID)
 
 	var err error
 	secret, err := a.K8sClient.CoreV1().Secrets(a.Namespace).Get(a.SecretName, v1.GetOptions{})
