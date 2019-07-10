@@ -1,0 +1,43 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: eventing-sources-alimns
+subjects:
+- kind: ServiceAccount
+  name: alimns-sa
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: eventing-sources-alimns-controller
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: alimns-sa
+secrets:
+- name: alimns-secret
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: alimns-secret
+type: Opaque
+data:
+  mns: eyAidXJsIjoiaHR0cHM6Ly8xMDQxMjA4OTE0MjUyNDA1Lm1ucy5jbi1oYW5nemhvdS5hbGl5dW5jcy5jb20vIiwgImFjY2Vzc0tleUlkIjoiTFRBSTNBaHdKdjZkcUNtYSIsImFjY2Vzc0tleVNlY3JldCI6IjBSMzVMeTNtTzBlOXdvT3REYkVsUmxyWGlZaVQzciIgfQ==
+
+---
+apiVersion: sources.eventing.knative.dev/v1alpha1
+kind: AliMnsSource
+metadata:
+  labels:
+    controller-tools.k8s.io: "1.0"
+  name: alimnssource
+spec:
+  # Add fields here
+  serviceAccountName: mns-sa
+  accessToken:
+    name: alimns-secret
+    key: mns
+  topic: knative-eventing-channel--ali-mns-channel-2--9fcfaeaa-56a7-11e9-910b-00163e001396
