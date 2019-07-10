@@ -25,6 +25,7 @@ metadata:
   name: alimns-secret
 type: Opaque
 data:
+  # { "url":"https://1xxx.mns.cn-shanghai.aliyuncs.com/", "accessKeyId":"xxxx","accessKeySecret":"xxxx" }
   mns: "<base64>"
 
 ---
