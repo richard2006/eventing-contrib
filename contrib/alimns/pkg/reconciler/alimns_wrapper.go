@@ -24,8 +24,6 @@ import (
 
 	"fmt"
 
-	"log"
-
 	"github.com/knative/eventing-contrib/contrib/alimns/pkg/apis/sources/v1alpha1"
 	"github.com/souriki/ali_mns"
 	"golang.org/x/sync/errgroup"
@@ -121,8 +119,6 @@ func (c *realAliMNSClient) subscriptionReceiver(ctx context.Context, subscriptio
 		select {
 		case resp := <-respChan:
 			{
-				resByte, _ := json.Marshal(resp)
-				log.Printf("messageData: %s", resByte)
 				msg := &realAliMNSMessage{
 					mrResp:       &resp,
 					client:       c.client,

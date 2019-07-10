@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Needed by the GCP PubSub Source to communicate with GCP PubSub.
+# Needed by the MNS Source to communicate with MNS.
 apiVersion: networking.istio.io/v1alpha3
 kind: ServiceEntry
 metadata:
@@ -24,4 +24,3 @@ spec:
   - number: 443
     name: https
     protocol: HTTPS
-  location: MESH_EXTERNAL
