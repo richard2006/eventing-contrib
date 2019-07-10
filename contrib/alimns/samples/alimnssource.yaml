@@ -25,7 +25,7 @@ metadata:
   name: alimns-secret
 type: Opaque
 data:
-  mns: eyAidXJsIjoiaHR0cHM6Ly8xMDQxMjA4OTE0MjUyNDA1Lm1ucy5jbi1oYW5nemhvdS5hbGl5dW5jcy5jb20vIiwgImFjY2Vzc0tleUlkIjoiTFRBSTNBaHdKdjZkcUNtYSIsImFjY2Vzc0tleVNlY3JldCI6IjBSMzVMeTNtTzBlOXdvT3REYkVsUmxyWGlZaVQzciIgfQ==
+  mns: "<base64>"
 
 ---
 apiVersion: sources.eventing.knative.dev/v1alpha1
@@ -40,4 +40,4 @@ spec:
   accessToken:
     name: alimns-secret
     key: mns
-  topic: knative-eventing-channel--ali-mns-channel-2--9fcfaeaa-56a7-11e9-910b-00163e001396
+  topic: knative-eventing-channel--ali-mns-channel-xxxx
