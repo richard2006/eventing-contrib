@@ -21,19 +21,21 @@ import (
 
 	"github.com/knative/eventing-contrib/contrib/alimns/pkg/apis"
 	controller "github.com/knative/eventing-contrib/contrib/alimns/pkg/reconciler"
-	"knative.dev/pkg/logging/logkey"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"knative.dev/pkg/logging/logkey"
 	"sigs.k8s.io/controller-runtime/pkg/client/config"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	"sigs.k8s.io/controller-runtime/pkg/runtime/signals"
 )
 
 func main() {
-	// Get a config to talk to the API server
 	logCfg := zap.NewProductionConfig()
 	logCfg.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
 	logger, err := logCfg.Build()
+	if err != nil {
+		log.Fatal(err)
+	}
 	logger = logger.With(zap.String(logkey.ControllerType, "alimns-controller"))
 	if err != nil {
 		log.Fatal(err)

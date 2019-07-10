@@ -33,7 +33,7 @@ spec:
       - name: manager
         image: registry.cn-hangzhou.aliyuncs.com/knative-release/alimns-controller:v0.1.0
         env:
-        - name: MNSOSS_RA_IMAGE
+        - name: MNS_RA_IMAGE
           value: registry.cn-hangzhou.aliyuncs.com/knative-release/alimns-receive_adapter:v0.1.0
         resources:
           limits:

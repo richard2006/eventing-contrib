@@ -24,6 +24,8 @@ import (
 
 	"fmt"
 
+	"log"
+
 	"github.com/knative/eventing-contrib/contrib/alimns/pkg/apis/sources/v1alpha1"
 	"github.com/souriki/ali_mns"
 	"golang.org/x/sync/errgroup"
@@ -59,12 +61,9 @@ func AliMNSClientCreator(ctx context.Context, creds *v1alpha1.Credentials) (MNSC
 // MNSClient is the set of methods we use on mns.Client. See mns.Client for documentation
 // of the functions.
 type MNSClient interface {
-	//SubscriptionInProject(id string) PubSubSubscription
-
 	CreateTopic(ctx context.Context, topicName string) error
 	DeleteTopic(ctx context.Context, topicName string) error
 	TopicExists(ctx context.Context, topicName string) (bool, error)
-	//TopicPublish(ctx context.Context)
 	Topic(ctx context.Context, topicName string) (ali_mns.AliMNSTopic, error)
 
 	CreateSubscription(ctx context.Context, topicName, subscriptionName string) error
@@ -79,7 +78,7 @@ var _ MNSClient = &realAliMNSClient{}
 
 // realAliMNSClient wraps a real MNS client, so that it matches the MNSClient
 // interface. It is needed because the real SubscriptionInProject returns a struct and does not
-// implicitly match gcpMNSClient, which returns an interface.
+// implicitly match MNSClient, which returns an interface.
 type realAliMNSClient struct {
 	client *ali_mns.MNSClient
 }
@@ -122,6 +121,8 @@ func (c *realAliMNSClient) subscriptionReceiver(ctx context.Context, subscriptio
 		select {
 		case resp := <-respChan:
 			{
+				resByte, _ := json.Marshal(resp)
+				log.Printf("messageData: %s", resByte)
 				msg := &realAliMNSMessage{
 					mrResp:       &resp,
 					client:       c.client,

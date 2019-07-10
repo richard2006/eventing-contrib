@@ -26,8 +26,6 @@ import (
 	mns "github.com/knative/eventing-contrib/contrib/alimns/pkg/adapter"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"knative.dev/pkg/logging"
-	"knative.dev/pkg/logging/logkey"
 
 	"golang.org/x/net/context"
 	"k8s.io/client-go/kubernetes"
@@ -58,18 +56,13 @@ func main() {
 	flag.Parse()
 
 	ctx := context.Background()
-
 	logCfg := zap.NewProductionConfig()
 	logCfg.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
 	logger, err := logCfg.Build()
 	if err != nil {
 		log.Fatalf("Unable to create logger: %v", err)
 	}
-	logger = logger.With(zap.String(logkey.ControllerType, "alimns-receive-adapter"))
-	if err != nil {
-		log.Fatal(err)
-	}
-	ctx = logging.WithLogger(ctx, logger.Sugar())
+
 	var env envConfig
 	if err := envconfig.Process("", &env); err != nil {
 		logger.Fatal("Failed to process env var", zap.Error(err))

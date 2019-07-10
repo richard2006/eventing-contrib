@@ -110,7 +110,7 @@ func (a *Adapter) Start(ctx context.Context) error {
 }
 
 func (a *Adapter) receiveMessage(ctx context.Context, m alimns.MNSMessage) {
-	logger := logging.FromContext(ctx)
+	logger := logging.FromContext(ctx).With(zap.Any("eventID", m.ID()), zap.Any("sink", a.SinkURI))
 	logger.Infow("Received message", zap.Any("messageData", m.Data()))
 
 	err := a.postMessage(ctx, logger, m)
