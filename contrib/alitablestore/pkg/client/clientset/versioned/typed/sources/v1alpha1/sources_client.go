@@ -19,15 +19,15 @@ limitations under the License.
 package v1alpha1
 
 import (
-	v1alpha1 "github.com/knative/eventing-contrib/contrib/alimns/pkg/apis/sources/v1alpha1"
-	"github.com/knative/eventing-contrib/contrib/alimns/pkg/client/clientset/versioned/scheme"
+	v1alpha1 "github.com/knative/eventing-contrib/contrib/alitablestore/pkg/apis/sources/v1alpha1"
+	"github.com/knative/eventing-contrib/contrib/alitablestore/pkg/client/clientset/versioned/scheme"
 	serializer "k8s.io/apimachinery/pkg/runtime/serializer"
 	rest "k8s.io/client-go/rest"
 )
 
 type SourcesV1alpha1Interface interface {
 	RESTClient() rest.Interface
-	AliMnsSourcesGetter
+	AliTablestoreSourcesGetter
 }
 
 // SourcesV1alpha1Client is used to interact with features provided by the sources.knative.dev group.
@@ -35,8 +35,8 @@ type SourcesV1alpha1Client struct {
 	restClient rest.Interface
 }
 
-func (c *SourcesV1alpha1Client) AliMnsSources(namespace string) AliMnsSourceInterface {
-	return newAliMnsSources(c, namespace)
+func (c *SourcesV1alpha1Client) AliTablestoreSources(namespace string) AliTablestoreSourceInterface {
+	return newAliTablestoreSources(c, namespace)
 }
 
 // NewForConfig creates a new SourcesV1alpha1Client for the given config.
