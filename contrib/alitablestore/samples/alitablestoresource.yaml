@@ -5,6 +5,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: alitablestore-sa
+  namespace: default
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -39,7 +40,12 @@ spec:
   # Add fields here
   serviceAccountName: alitablestore-sa
   accessToken:
-    name: alitablestore-secret
-    key: alitablestore
+    secretKeyRef
+      name: alitablestore-secret
+      key: alitablestore
   tableName: weather
   instance: knative-weather
+  sink:
+    apiVersion: serving.knative.dev/v1alpha1
+    kind: Service
+    name: event-display

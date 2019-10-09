@@ -31,10 +31,10 @@ spec:
       serviceAccountName: alitablestore-controller-manager
       containers:
       - name: manager
-        image: registry.cn-hangzhou.aliyuncs.com/knative-release/alitablestore-controller:v0.1.0
+        image: registry.cn-hangzhou.aliyuncs.com/knative-release/alitablestore-controller:v2-20191009164551
         env:
-        - name: MNS_RA_IMAGE
-          value: registry.cn-hangzhou.aliyuncs.com/knative-release/alitablestore-receive_adapter:v0.1.0
+        - name: Tablestore_RA_IMAGE
+          value: registry.cn-hangzhou.aliyuncs.com/knative-release/alitablestore-receive_adapter:v2-20191009162841
         resources:
           limits:
             cpu: 100m
