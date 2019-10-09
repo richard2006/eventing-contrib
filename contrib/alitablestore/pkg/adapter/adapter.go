@@ -120,7 +120,8 @@ func (a *Adapter) receiveMessage(tunnelCtx *tunnel.ChannelContext, records []*tu
 	if records == nil || len(records) == 0 {
 		logger.Infow("No Received message")
 	}
-	logger.Infow("Received message", zap.Any("messageData", tunnelCtx.TunnelId))
+	recordByte, _ := json.Marshal(records)
+	logger.Infow("Received message", zap.Any("messageData", string(recordByte)))
 
 	err := a.postMessage(a.ctx, logger, tunnelCtx, records)
 	if err != nil {

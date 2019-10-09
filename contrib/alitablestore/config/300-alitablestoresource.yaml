@@ -44,6 +44,8 @@ spec:
         spec:
           properties:
             eventTypes:
+              items:
+                type: string
               type: array
             serviceAccountName:
               type: string
