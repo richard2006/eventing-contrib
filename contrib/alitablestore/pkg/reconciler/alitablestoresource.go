@@ -298,13 +298,16 @@ func (r *reconciler) reconcileEventTypes(ctx context.Context, src *v1alpha1.AliT
 }
 
 func (r *reconciler) newEventTypeReconcilerArgs(src *v1alpha1.AliTablestoreSource) *eventtype.ReconcilerArgs {
-	spec := eventingv1alpha1.EventTypeSpec{
-		Type:   v1alpha1.AliTablestoreSourceEventType,
-		Source: v1alpha1.AliTablestoreEventSource(src.Spec.TableName),
-		Broker: src.Spec.Sink.Name,
+	specs := make([]eventingv1alpha1.EventTypeSpec, 0)
+	for _, ev := range src.Spec.EventTypes {
+		spec := eventingv1alpha1.EventTypeSpec{
+			Type:   v1alpha1.AliTablestoreEventType(ev),
+			Source: v1alpha1.AliTablestoreEventSource(src.Spec.TableName),
+			Broker: src.Spec.Sink.Name,
+		}
+		specs = append(specs, spec)
 	}
-	specs := make([]eventingv1alpha1.EventTypeSpec, 0, 1)
-	specs = append(specs, spec)
+
 	return &eventtype.ReconcilerArgs{
 		Specs:     specs,
 		Namespace: src.Namespace,

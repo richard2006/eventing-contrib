@@ -36,10 +36,15 @@ var _ runtime.Object = (*AliTablestoreSource)(nil)
 var _ = duck.VerifyType(&AliTablestoreSource{}, &duckv1alpha1.Conditions{})
 
 const (
-	// TablestoreSourceEventType is the tablestore CloudEvent type, in case MNS doesn't send a
+	// TablestoreSourceEventType is the tablestore CloudEvent type, in case tablestore doesn't send a
 	// CloudEvent itself.
-	AliTablestoreSourceEventType = "alicloud.tablestore"
+	AliTablestoreSourceEventTypePrefix = "alicloud.tablestore.city"
 )
+
+// AliTablestoreEventType returns the AliTablestore CloudEvent type value.
+func AliTablestoreEventType(ghEventType string) string {
+	return fmt.Sprintf("%s.%s", AliTablestoreSourceEventTypePrefix, ghEventType)
+}
 
 // AliTablestoreEventSource returns the tablestore CloudEvent source value.
 func AliTablestoreEventSource(topic string) string {
@@ -48,7 +53,8 @@ func AliTablestoreEventSource(topic string) string {
 
 // AliTablestoreSourceSpec defines the desired state of AliTablestoreSource
 type AliTablestoreSourceSpec struct {
-	// AccessToken is the Kubernetes secret containing the mns
+	EventTypes []string `json:"eventTypes"`
+	// AccessToken is the Kubernetes secret containing the tablestore
 	// access token
 	AccessToken SecretValueFromSource `json:"accessToken"`
 	// Topic is the ID of the GCP PubSub Topic to Subscribe to. It must be in the form of the
@@ -89,11 +95,11 @@ type AliTablestoreSourceStatus struct {
 	// * Conditions - the latest available observations of a resource's current state.
 	duckv1alpha1.Status `json:",inline"`
 
-	// SinkURI is the current active sink URI that has been configured for the GcpPubSubSource.
+	// SinkURI is the current active sink URI that has been configured for the AliTablestoreSource.
 	// +optional
 	SinkURI string `json:"sinkUri,omitempty"`
 
-	// TransformerURI is the current active transformer URI that has been configured for the GcpPubSubSource.
+	// TransformerURI is the current active transformer URI that has been configured for the AliTablestoreSource.
 	// +optional
 	TransformerURI string `json:"transformerUri,omitempty"`
 }
@@ -101,7 +107,7 @@ type AliTablestoreSourceStatus struct {
 // +genclient
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
-// AliTablestoreSource is the Schema for the mnssources API
+// AliTablestoreSource is the Schema for the AliTablestoreSource API
 // +k8s:openapi-gen=true
 type AliTablestoreSource struct {
 	metav1.TypeMeta   `json:",inline"`
@@ -112,54 +118,54 @@ type AliTablestoreSource struct {
 }
 
 const (
-	// MNSConditionReady has status True when the MNSSource is ready to send events.
-	MNSConditionReady = duckv1alpha1.ConditionReady
+	// TablestoreConditionReady has status True when the TablestoreSource is ready to send events.
+	TablestoreConditionReady = duckv1alpha1.ConditionReady
 
-	// MNSConditionSinkProvided has status True when the MNSSource has been configured with a sink target.
-	MNSConditionSinkProvided duckv1alpha1.ConditionType = "SinkProvided"
+	// TablestoreConditionSinkProvided has status True when the TablestoreSource has been configured with a sink target.
+	TablestoreConditionSinkProvided duckv1alpha1.ConditionType = "SinkProvided"
 
-	// MNSConditionTransformerProvided has status True when the MNSSource has been configured with a transformer target.
-	MNSConditionTransformerProvided duckv1alpha1.ConditionType = "TransformerProvided"
+	// TablestoreConditionTransformerProvided has status True when the TablestoreSource has been configured with a transformer target.
+	TablestoreConditionTransformerProvided duckv1alpha1.ConditionType = "TransformerProvided"
 
-	// MNSConditionDeployed has status True when the MNSSource has had it's receive adapter deployment created.
-	MNSConditionDeployed duckv1alpha1.ConditionType = "Deployed"
+	// TablestoreConditionDeployed has status True when the TablestoreSource has had it's receive adapter deployment created.
+	TablestoreConditionDeployed duckv1alpha1.ConditionType = "Deployed"
 
-	// MNSConditionSubscribed has status True when a mns Subscription has been created pointing at the created receive adapter deployment.
-	MNSConditionSubscribed duckv1alpha1.ConditionType = "Subscribed"
+	// TablestoreConditionSubscribed has status True when a Tablestore Subscription has been created pointing at the created receive adapter deployment.
+	TablestoreConditionSubscribed duckv1alpha1.ConditionType = "Subscribed"
 
-	// MNSConditionEventTypesProvided has status True when the MNSSource has been configured with event types.
-	MNSConditionEventTypesProvided duckv1alpha1.ConditionType = "EventTypesProvided"
+	// TablestoreConditionEventTypesProvided has status True when the TablestoreSource has been configured with event types.
+	TablestoreConditionEventTypesProvided duckv1alpha1.ConditionType = "EventTypesProvided"
 )
 
-var mnsSourceCondSet = duckv1alpha1.NewLivingConditionSet(
-	MNSConditionSinkProvided,
-	MNSConditionDeployed,
-	MNSConditionSubscribed)
+var tablestoreSourceCondSet = duckv1alpha1.NewLivingConditionSet(
+	TablestoreConditionSinkProvided,
+	TablestoreConditionDeployed,
+	TablestoreConditionSubscribed)
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
 // GetCondition returns the condition currently associated with the given type, or nil.
 func (s *AliTablestoreSourceStatus) GetCondition(t duckv1alpha1.ConditionType) *duckv1alpha1.Condition {
-	return mnsSourceCondSet.Manage(s).GetCondition(t)
+	return tablestoreSourceCondSet.Manage(s).GetCondition(t)
 }
 
 // IsReady returns true if the resource is ready overall.
 func (s *AliTablestoreSourceStatus) IsReady() bool {
-	return mnsSourceCondSet.Manage(s).IsHappy()
+	return tablestoreSourceCondSet.Manage(s).IsHappy()
 }
 
 // InitializeConditions sets relevant unset conditions to Unknown state.
 func (s *AliTablestoreSourceStatus) InitializeConditions() {
-	mnsSourceCondSet.Manage(s).InitializeConditions()
+	tablestoreSourceCondSet.Manage(s).InitializeConditions()
 }
 
 // MarkSink sets the condition that the source has a sink configured.
 func (s *AliTablestoreSourceStatus) MarkSink(uri string) {
 	s.SinkURI = uri
 	if len(uri) > 0 {
-		mnsSourceCondSet.Manage(s).MarkTrue(MNSConditionSinkProvided)
+		tablestoreSourceCondSet.Manage(s).MarkTrue(TablestoreConditionSinkProvided)
 	} else {
-		mnsSourceCondSet.Manage(s).MarkUnknown(MNSConditionSinkProvided, "SinkEmpty", "Sink has resolved to empty.")
+		tablestoreSourceCondSet.Manage(s).MarkUnknown(TablestoreConditionSinkProvided, "SinkEmpty", "Sink has resolved to empty.")
 	}
 }
 
@@ -167,49 +173,49 @@ func (s *AliTablestoreSourceStatus) MarkSink(uri string) {
 func (s *AliTablestoreSourceStatus) MarkTransformer(uri string) {
 	s.TransformerURI = uri
 	if len(uri) > 0 {
-		mnsSourceCondSet.Manage(s).MarkTrue(MNSConditionTransformerProvided)
+		tablestoreSourceCondSet.Manage(s).MarkTrue(TablestoreConditionTransformerProvided)
 	} else {
-		mnsSourceCondSet.Manage(s).MarkUnknown(MNSConditionTransformerProvided, "TransformerEmpty", "Transformer has resolved to empty.")
+		tablestoreSourceCondSet.Manage(s).MarkUnknown(TablestoreConditionTransformerProvided, "TransformerEmpty", "Transformer has resolved to empty.")
 	}
 }
 
 // MarkNoSink sets the condition that the source does not have a sink configured.
 func (s *AliTablestoreSourceStatus) MarkNoSink(reason, messageFormat string, messageA ...interface{}) {
-	mnsSourceCondSet.Manage(s).MarkFalse(MNSConditionSinkProvided, reason, messageFormat, messageA...)
+	tablestoreSourceCondSet.Manage(s).MarkFalse(TablestoreConditionSinkProvided, reason, messageFormat, messageA...)
 }
 
 // MarkNoTransformer sets the condition that the source does not have a transformer configured.
 func (s *AliTablestoreSourceStatus) MarkNoTransformer(reason, messageFormat string, messageA ...interface{}) {
-	mnsSourceCondSet.Manage(s).MarkFalse(MNSConditionTransformerProvided, reason, messageFormat, messageA...)
+	tablestoreSourceCondSet.Manage(s).MarkFalse(TablestoreConditionTransformerProvided, reason, messageFormat, messageA...)
 }
 
 // MarkDeployed sets the condition that the source has been deployed.
 func (s *AliTablestoreSourceStatus) MarkDeployed() {
-	mnsSourceCondSet.Manage(s).MarkTrue(MNSConditionDeployed)
+	tablestoreSourceCondSet.Manage(s).MarkTrue(TablestoreConditionDeployed)
 }
 
 // MarkDeploying sets the condition that the source is deploying.
 func (s *AliTablestoreSourceStatus) MarkDeploying(reason, messageFormat string, messageA ...interface{}) {
-	mnsSourceCondSet.Manage(s).MarkUnknown(MNSConditionDeployed, reason, messageFormat, messageA...)
+	tablestoreSourceCondSet.Manage(s).MarkUnknown(TablestoreConditionDeployed, reason, messageFormat, messageA...)
 }
 
 // MarkNotDeployed sets the condition that the source has not been deployed.
 func (s *AliTablestoreSourceStatus) MarkNotDeployed(reason, messageFormat string, messageA ...interface{}) {
-	mnsSourceCondSet.Manage(s).MarkFalse(MNSConditionDeployed, reason, messageFormat, messageA...)
+	tablestoreSourceCondSet.Manage(s).MarkFalse(TablestoreConditionDeployed, reason, messageFormat, messageA...)
 }
 
 func (s *AliTablestoreSourceStatus) MarkSubscribed() {
-	mnsSourceCondSet.Manage(s).MarkTrue(MNSConditionSubscribed)
+	tablestoreSourceCondSet.Manage(s).MarkTrue(TablestoreConditionSubscribed)
 }
 
 // MarkEventTypes sets the condition that the source has created its event types.
 func (s *AliTablestoreSourceStatus) MarkEventTypes() {
-	mnsSourceCondSet.Manage(s).MarkTrue(MNSConditionEventTypesProvided)
+	tablestoreSourceCondSet.Manage(s).MarkTrue(TablestoreConditionEventTypesProvided)
 }
 
 // MarkNoEventTypes sets the condition that the source does not its event types configured.
 func (s *AliTablestoreSourceStatus) MarkNoEventTypes(reason, messageFormat string, messageA ...interface{}) {
-	mnsSourceCondSet.Manage(s).MarkFalse(MNSConditionEventTypesProvided, reason, messageFormat, messageA...)
+	tablestoreSourceCondSet.Manage(s).MarkFalse(TablestoreConditionEventTypesProvided, reason, messageFormat, messageA...)
 }
 
 // AliTablestoreSourceList contains a list of AliTablestoreSource

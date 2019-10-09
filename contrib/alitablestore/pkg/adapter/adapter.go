@@ -56,6 +56,8 @@ type Adapter struct {
 	SubscriptionID string
 	// SinkURI is the URI messages will be forwarded on to.
 	SinkURI string
+
+	AdCode string
 	// TransformerURI is the URI messages will be forwarded on to for any transformation
 	// before they are sent to SinkURI.
 	TransformerURI string
@@ -131,6 +133,7 @@ func (a *Adapter) receiveMessage(tunnelCtx *tunnel.ChannelContext, records []*tu
 func (a *Adapter) postMessage(ctx context.Context, logger *zap.SugaredLogger, tunnelCtx *tunnel.ChannelContext, records []*tunnel.Record) error {
 	for _, r := range records {
 		id := ""
+		adcode := ""
 		rMap := make(map[string]string, 0)
 		if r.PrimaryKey.PrimaryKeys != nil {
 			for _, col := range r.PrimaryKey.PrimaryKeys {
@@ -142,6 +145,9 @@ func (a *Adapter) postMessage(ctx context.Context, logger *zap.SugaredLogger, tu
 			if *col.Name == "id" {
 				id = col.Value.(string)
 			}
+			if *col.Name == "adcode" {
+				adcode = col.Value.(string)
+			}
 			rMap[*col.Name] = col.Value.(string)
 		}
 		// Create the CloudEvent.
@@ -151,7 +157,7 @@ func (a *Adapter) postMessage(ctx context.Context, logger *zap.SugaredLogger, tu
 		event.SetDataContentType(*cloudevents.StringOfApplicationJSON())
 		event.SetSource(a.source)
 		event.SetData(rMap)
-		event.SetType(sourcesv1alpha1.AliTablestoreSourceEventType)
+		event.SetType(sourcesv1alpha1.AliTablestoreEventType(adcode))
 
 		// If a transformer has been configured, then transform the message.
 		if a.transformer {
