@@ -115,8 +115,6 @@ func (c *realAliTunnelClient) SubscriptionExists(ctx context.Context, tableName,
 		TableName:  tableName,
 		TunnelName: subscriptionName,
 	}
-	fmt.Println(tableName)
-	fmt.Println(subscriptionName)
 	_, err := c.client.DescribeTunnel(req)
 	if err != nil {
 		if strings.Contains(err.Error(), "not exist") {

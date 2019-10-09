@@ -43,6 +43,8 @@ spec:
           type: object
         spec:
           properties:
+            eventTypes:
+              type: array
             serviceAccountName:
               type: string
               description: "Name of the Kubernetes ServiceAccount that is running the Receiver Adapter Pods."

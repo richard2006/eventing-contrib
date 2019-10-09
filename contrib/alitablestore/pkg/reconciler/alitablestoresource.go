@@ -265,6 +265,11 @@ func (r *reconciler) createSubscription(ctx context.Context, src *v1alpha1.AliTa
 		return "", err
 	}
 	subName := generateSubName(src)
+	if exists, err := psc.SubscriptionExists(ctx, src.Spec.TableName, subName); err != nil {
+		return "", err
+	} else if exists {
+		return subName, nil
+	}
 	err = psc.CreateSubscription(ctx, src.Spec.TableName, subName)
 	if err != nil {
 		logging.FromContext(ctx).Desugar().Info("Error creating new subscription", zap.Error(err))
