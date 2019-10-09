@@ -26,7 +26,7 @@ metadata:
   name: alitablestore-secret
 type: Opaque
 data:
-  # { "url":"https://1xxx.mns.cn-shanghai.aliyuncs.com/", "accessKeyId":"xxxx","accessKeySecret":"xxxx" }
+  # { "url":"https://xxx.cn-beijing.ots.aliyuncs.com/", "accessKeyId":"xxxx","accessKeySecret":"xxxx" }
   alitablestore: "<base64>"
 
 ---
@@ -38,6 +38,9 @@ metadata:
   name: alitablestoresource
 spec:
   # Add fields here
+  eventTypes:
+  - 330100
+  - 110000
   serviceAccountName: alitablestore-sa
   accessToken:
     secretKeyRef
