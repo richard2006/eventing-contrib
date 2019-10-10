@@ -132,18 +132,10 @@ func (a *Adapter) receiveMessage(tunnelCtx *tunnel.ChannelContext, records []*tu
 }
 func (a *Adapter) postMessage(ctx context.Context, logger *zap.SugaredLogger, tunnelCtx *tunnel.ChannelContext, records []*tunnel.Record) error {
 	for _, r := range records {
-		date := ""
-		adcode := ""
 		rMap := make(map[string]string, 0)
 		if r.PrimaryKey.PrimaryKeys != nil {
 			for _, col := range r.PrimaryKey.PrimaryKeys {
 				rMap[col.ColumnName] = col.Value.(string)
-				if col.ColumnName == "date" {
-					date = col.Value.(string)
-				}
-				if col.ColumnName == "adcode" {
-					adcode = col.Value.(string)
-				}
 			}
 		}
 		for _, col := range r.Columns {
@@ -151,12 +143,12 @@ func (a *Adapter) postMessage(ctx context.Context, logger *zap.SugaredLogger, tu
 		}
 		// Create the CloudEvent.
 		event := cloudevents.NewEvent(cloudevents.VersionV02)
-		event.SetID(fmt.Sprintf("%s-%s", adcode, date))
+		event.SetID(fmt.Sprintf("%v", time.Now().Unix()))
 		event.SetTime(time.Now())
 		event.SetDataContentType(*cloudevents.StringOfApplicationJSON())
 		event.SetSource(a.source)
 		event.SetData(rMap)
-		event.SetType(sourcesv1alpha1.AliTablestoreEventType(adcode))
+		event.SetType(sourcesv1alpha1.AliTablestoreSourceEventType)
 
 		// If a transformer has been configured, then transform the message.
 		if a.transformer {

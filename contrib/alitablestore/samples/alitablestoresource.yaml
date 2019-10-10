@@ -38,9 +38,6 @@ metadata:
   name: alitablestoresource
 spec:
   # Add fields here
-  eventTypes:
-  - 330100
-  - 110000
   serviceAccountName: alitablestore-sa
   accessToken:
     secretKeyRef

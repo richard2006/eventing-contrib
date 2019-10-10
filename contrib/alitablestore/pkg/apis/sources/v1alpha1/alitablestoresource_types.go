@@ -38,13 +38,13 @@ var _ = duck.VerifyType(&AliTablestoreSource{}, &duckv1alpha1.Conditions{})
 const (
 	// TablestoreSourceEventType is the tablestore CloudEvent type, in case tablestore doesn't send a
 	// CloudEvent itself.
-	AliTablestoreSourceEventTypePrefix = "alicloud.tablestore.city"
+	AliTablestoreSourceEventType = "alicloud.tablestore"
 )
 
-// AliTablestoreEventType returns the AliTablestore CloudEvent type value.
-func AliTablestoreEventType(ghEventType string) string {
-	return fmt.Sprintf("%s.%s", AliTablestoreSourceEventTypePrefix, ghEventType)
-}
+//// AliTablestoreEventType returns the AliTablestore CloudEvent type value.
+//func AliTablestoreEventType(ghEventType string) string {
+//	return fmt.Sprintf("%s.%s", AliTablestoreSourceEventTypePrefix, ghEventType)
+//}
 
 // AliTablestoreEventSource returns the tablestore CloudEvent source value.
 func AliTablestoreEventSource(topic string) string {
@@ -53,7 +53,6 @@ func AliTablestoreEventSource(topic string) string {
 
 // AliTablestoreSourceSpec defines the desired state of AliTablestoreSource
 type AliTablestoreSourceSpec struct {
-	EventTypes []string `json:"eventTypes"`
 	// AccessToken is the Kubernetes secret containing the tablestore
 	// access token
 	AccessToken SecretValueFromSource `json:"accessToken"`
