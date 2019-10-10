@@ -120,8 +120,7 @@ func (a *Adapter) receiveMessage(tunnelCtx *tunnel.ChannelContext, records []*tu
 	if records == nil || len(records) == 0 {
 		logger.Infow("No Received message")
 	}
-	recordByte, _ := json.Marshal(records)
-	logger.Infow("Received message", zap.Any("messageData", string(recordByte)))
+	logger.Infow("Received message", zap.Any("messageData", tunnelCtx.TunnelId))
 
 	err := a.postMessage(a.ctx, logger, tunnelCtx, records)
 	if err != nil {
@@ -133,7 +132,7 @@ func (a *Adapter) receiveMessage(tunnelCtx *tunnel.ChannelContext, records []*tu
 }
 func (a *Adapter) postMessage(ctx context.Context, logger *zap.SugaredLogger, tunnelCtx *tunnel.ChannelContext, records []*tunnel.Record) error {
 	for _, r := range records {
-		id := ""
+		date := ""
 		adcode := ""
 		rMap := make(map[string]string, 0)
 		if r.PrimaryKey.PrimaryKeys != nil {
@@ -142,9 +141,8 @@ func (a *Adapter) postMessage(ctx context.Context, logger *zap.SugaredLogger, tu
 			}
 		}
 		for _, col := range r.Columns {
-			// 过滤掉 id 信息
-			if *col.Name == "id" {
-				id = col.Value.(string)
+			if *col.Name == "date" {
+				date = col.Value.(string)
 			}
 			if *col.Name == "adcode" {
 				adcode = col.Value.(string)
@@ -153,7 +151,7 @@ func (a *Adapter) postMessage(ctx context.Context, logger *zap.SugaredLogger, tu
 		}
 		// Create the CloudEvent.
 		event := cloudevents.NewEvent(cloudevents.VersionV02)
-		event.SetID(id)
+		event.SetID(fmt.Sprintf("%s-%s", adcode, date))
 		event.SetTime(time.Now())
 		event.SetDataContentType(*cloudevents.StringOfApplicationJSON())
 		event.SetSource(a.source)
