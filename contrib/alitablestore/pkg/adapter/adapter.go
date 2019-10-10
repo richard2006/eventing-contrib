@@ -138,15 +138,15 @@ func (a *Adapter) postMessage(ctx context.Context, logger *zap.SugaredLogger, tu
 		if r.PrimaryKey.PrimaryKeys != nil {
 			for _, col := range r.PrimaryKey.PrimaryKeys {
 				rMap[col.ColumnName] = col.Value.(string)
+				if col.ColumnName == "date" {
+					date = col.Value.(string)
+				}
+				if col.ColumnName == "adcode" {
+					adcode = col.Value.(string)
+				}
 			}
 		}
 		for _, col := range r.Columns {
-			if *col.Name == "date" {
-				date = col.Value.(string)
-			}
-			if *col.Name == "adcode" {
-				adcode = col.Value.(string)
-			}
 			rMap[*col.Name] = col.Value.(string)
 		}
 		// Create the CloudEvent.
